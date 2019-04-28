@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60">
+    <Properties>
+        <!--${sys:catalina.home}-->
+        <Property name="LOG_HOME">/logs</Property>
+    </Properties>
+    <Appenders>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>[CCB][%d{yyyy-MM-dd HH:mm:ss SSS}][%-5p][%t][%c][message=%m]%n</pattern>>
+            </PatternLayout>
+        </Console>
+
+        <RollingRandomAccessFile name="appFileAppender" fileName="${LOG_HOME}/app.log"
+                                 filePattern="${LOG_HOME}/app-%d{yyyy-MM-dd-HH}-%i.log">
+            <PatternLayout>
+                <Pattern>[CCB][%d{yyyy-MM-dd HH:mm:ss SSS}][%-5p][%t][%c][message=%m]%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="1GB"/>
+                <!--<OnStartupTriggeringPolicy/>-->
+            </Policies>
+            <DefaultRolloverStrategy fileIndex="min" max="4"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- 使用disruptor，异步日志输出 -->
+        <AsyncLogger name="org.springframework.web" level="info" additivity="false">
+            <AppenderRef ref="consoleAppender"/>
+
+        </AsyncLogger>
+
+        <AsyncRoot level="info">
+
+        </AsyncRoot>
+
+        <Root level="info">
+            <AppenderRef ref="consoleAppender"/>
+
+        </Root>
+    </Loggers>
+</Configuration>
