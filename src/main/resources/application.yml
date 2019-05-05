@@ -4,12 +4,7 @@ spring.mvc.view.prefix: /
 spring.mvc.view.suffix: .html
 
 #logger:trace/debug/info/warn/error,默认info
-logging:
-  path: D:/log/
-  file: zijida.log
-  level:
-    tch:
-      zijidaserver: debug
+logging.config: classpath:log4j2-spring.xml
 
 #mysql数据库
 spring.datasource:

@@ -36,17 +36,21 @@ public class ProjectManageService {
 		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 没获取到缓存，说明code失效了，让前段自己从登陆
 		if(userSession != null){
-			String unionId=userSession.getUnionid();
-			// 查库，项目管理情况
-			Map<String, Integer> ret=getUserProjectManage(unionId);
-			result = miniService.newSuccessResponseMap();
-			result.put("curCount", ret.get("curCount"));
-			result.put("maxCount", ret.get("maxCount"));
-			if (ret.get("curCount")<ret.get("maxCount")) {
-				result.put("canAdd", true);
+			//根据openid在数据库获取union_id,session里一开始并不会保存union_id
+			String unionId=userInfoDao.getByOpenIdStatus(userSession.getOpenid(), "9").getUnion_id();
+			if(unionId!=null) {
+				// 查库，项目管理情况
+				Map<String, Integer> ret = getUserProjectManage(unionId);
+				result = miniService.newSuccessResponseMap();
+				result.put("curCount", ret.get("curCount"));
+				result.put("maxCount", ret.get("maxCount"));
+				if (ret.get("curCount") < ret.get("maxCount")) {
+					result.put("canAdd", true);
+				} else
+					result.put("canAdd", false);
 			}
 			else
-				result.put("canAdd", false);
+				result = miniService.newErrorResponseMap(9003,"查询用户编号失败!");
 		}
 		else {
 			log.info("code已失效!logincode=" + loginCode);

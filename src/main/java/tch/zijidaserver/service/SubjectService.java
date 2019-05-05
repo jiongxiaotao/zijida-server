@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tch.zijidaserver.dao.Code2SessionDao;
 import tch.zijidaserver.dao.SubjectDao;
+import tch.zijidaserver.dao.UserInfoDao;
 import tch.zijidaserver.entity.Subject;
 import tch.zijidaserver.entity.UserSession;
 
@@ -21,6 +22,8 @@ public class SubjectService {
 	@Autowired
 	private Code2SessionDao code2SessionDao;
 	@Autowired
+	private UserInfoDao userInfoDao;
+	@Autowired
 	private SubjectDao subjectDao;
 	private Log log = LogFactory.getLog(SubjectService.class);
 	//查询评分项列表
@@ -33,7 +36,6 @@ public class SubjectService {
 		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 没获取到缓存，说明code失效了，让前段自己从登陆
 		if(userSession != null){
-			String unionId=userSession.getUnionid();
 			// 查询评分项详情
 			log.info("查询评分项列表：projectId=" + projectId);
 			//查所有

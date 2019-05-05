@@ -22,9 +22,9 @@ public class ScoreService {
 	@Autowired
 	private Code2SessionDao code2SessionDao;
 	@Autowired
-	private SubjectDao subjectDao;
+	private UserInfoDao userInfoDao;
 	@Autowired
-	private VoteeDao voteeDao;
+	private SubjectDao subjectDao;
 	@Autowired
 	private ScoreDao scoreDao;
 	@Autowired
@@ -119,57 +119,60 @@ public class ScoreService {
 		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
-			//检查当前用户是否已评过分
-			int hasPR=scoreDao.queryUserProjectDone(projectId, userSession.getUnionid());
-			//查询sql报错
-			if(hasPR==-1){
-				result = miniService.newErrorResponseMap(2304, "查询用户是否对项目打分失败!");
-			}
-			else if(hasPR>0)
-				result = miniService.newErrorResponseMap(2305, "该用户已完成对本项目打分!");
-			else{
-				//判断项目是否已结束
-				project=projectDao.queryProjectById(projectId);
-				if(project.getStatus().equals("9")){
-					result = miniService.newErrorResponseMap(2306, "本项目已终止评分!");
-				}
-				//项目还未开放评分
-				else if(!project.getStatus().equals("2"))
-					result = miniService.newErrorResponseMap(2309, "本项目还未开放评分!");
-				else{
-					//遍历每个打分
-					boolean flag=true;
-					for(Score item:scoreList){
-						item.setUser_id(userSession.getUnionid());
-						//入库
-						flag=scoreDao.insert(item);
+			//根据openid在数据库获取union_id,session里一开始并不会保存union_id
+			String unionId=userInfoDao.getByOpenIdStatus(userSession.getOpenid(), "9").getUnion_id();
+			if(unionId!=null) {
+				//检查当前用户是否已评过分
+				int hasPR = scoreDao.queryUserProjectDone(projectId, unionId);
+				//查询sql报错
+				if (hasPR == -1) {
+					result = miniService.newErrorResponseMap(2304, "查询用户是否对项目打分失败!");
+				} else if (hasPR > 0)
+					result = miniService.newErrorResponseMap(2305, "该用户已完成对本项目打分!");
+				else {
+					//判断项目是否已结束
+					project = projectDao.queryProjectById(projectId);
+					if (project.getStatus().equals("9")) {
+						result = miniService.newErrorResponseMap(2306, "本项目已终止评分!");
 					}
-					//依次插入，有错误时将插入的内容全部清空
-					if(!flag){
-						scoreDao.deleteUserProjectScore(projectId,userSession.getUnionid());
-						result = miniService.newErrorResponseMap(2307, "对评分项打分时发生错误!");
-					}
-					//全部插入成功
+					//项目还未开放评分
+					else if (!project.getStatus().equals("2"))
+						result = miniService.newErrorResponseMap(2309, "本项目还未开放评分!");
 					else {
-						//project表的已完成评分数+1
-						projectDao.increaseDoneAmount(projectId);
-						//判断新插入后，项目收集个数是否到达期望个数
-						project=projectDao.queryProjectById(projectId);
-						if(project.getDone_amount()==project.getAmount()){
-							project.setStatus("9");
-							Boolean ret=projectDao.update(project);
-							if(ret){
-								result = miniService.newSuccessResponseMap();
-							}
-							else{
-								result = miniService.newErrorResponseMap(2308, "更新项目状态失败!");
-							}
+						//遍历每个打分
+						boolean flag = true;
+						for (Score item : scoreList) {
+							item.setUser_id(unionId);
+							//入库
+							flag = scoreDao.insert(item);
 						}
-						else
-							result = miniService.newSuccessResponseMap();
+						//依次插入，有错误时将插入的内容全部清空
+						if (!flag) {
+							scoreDao.deleteUserProjectScore(projectId, unionId);
+							result = miniService.newErrorResponseMap(2307, "对评分项打分时发生错误!");
+						}
+						//全部插入成功
+						else {
+							//project表的已完成评分数+1
+							projectDao.increaseDoneAmount(projectId);
+							//判断新插入后，项目收集个数是否到达期望个数
+							project = projectDao.queryProjectById(projectId);
+							if (project.getDone_amount() == project.getAmount()) {
+								project.setStatus("9");
+								Boolean ret = projectDao.update(project);
+								if (ret) {
+									result = miniService.newSuccessResponseMap();
+								} else {
+									result = miniService.newErrorResponseMap(2308, "更新项目状态失败!");
+								}
+							} else
+								result = miniService.newSuccessResponseMap();
+						}
 					}
 				}
 			}
+			else
+				result = miniService.newErrorResponseMap(9003,"查询用户编号失败!");
 		}
 		// 没获取到openId，让前段自己从登陆
 		else {

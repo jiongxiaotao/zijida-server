@@ -33,7 +33,6 @@ public class VoteeService {
 		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 没获取到缓存，说明code失效了，让前段自己从登陆
 		if(userSession != null){
-			String unionId=userSession.getUnionid();
 			// 查询被评人详情
 			log.info("查询被评人列表：projectId=" + projectId);
 			//查所有
