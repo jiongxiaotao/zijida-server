@@ -212,7 +212,7 @@ public class ProjectService {
 				Project curProject = projectDao.queryProjectById(projectId);
 				if (curProject.getUser_id().equals(unionId)) {
 					//未发布或已发布未开放评分才可以删除
-					if (curProject.getStatus().equals("1") || curProject.getStatus().equals("2")) {
+					if (curProject.getStatus().equals("0") || curProject.getStatus().equals("1")) {
 						Boolean ret = projectDao.delete(projectId);
 						if (ret)
 							result = miniService.newSuccessResponseMap();
