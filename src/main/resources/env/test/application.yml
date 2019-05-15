@@ -33,3 +33,6 @@ spring.redis:
 mini.weixinapi:
   host: https://api.weixin.qq.com/
   code2session: sns/jscode2session?
+#缓存文件
+filePath:
+  message: /root/zijida/file/message

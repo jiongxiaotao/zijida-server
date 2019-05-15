@@ -43,11 +43,11 @@ public class UserInfoDao {
    //新增小程序用户信息
    public boolean insert(UserInfo userInfo){
         try{
-            String sql="INSERT INTO t_user (open_id,union_id,cus_name,status,province,city)" +
-                    " VALUES (?,?,?,?,?,?)";
+            String sql="INSERT INTO t_user (open_id,union_id,cus_name,status,province,city,avatarUrl)" +
+                    " VALUES (?,?,?,?,?,?,?)";
             log.info("[SQL]"+sql+"<====>"+userInfo.getOpen_id());
             jdbc.update(sql,userInfo.getOpen_id(),userInfo.getUnion_id(),userInfo.getCus_name(),
-                    userInfo.getStatus(),userInfo.getProvince(),userInfo.getCity());
+                    userInfo.getStatus(),userInfo.getProvince(),userInfo.getCity(),userInfo.getAvatarUrl());
             return true;
         }catch (Exception e){
             log.error(e);
@@ -58,10 +58,10 @@ public class UserInfoDao {
     //更新小程序用户信息
     public boolean update(UserInfo userInfo){
         try {
-            String sql="UPDATE t_user SET union_id=?,cus_name=?,status=?,province=?,city=? WHERE open_id=?";
+            String sql="UPDATE t_user SET union_id=?,cus_name=?,status=?,province=?,city=?,avatarUrl=? WHERE open_id=?";
             log.info("[SQL]"+sql+"<====>"+userInfo.getOpen_id());
-            jdbc.update(sql,userInfo.getUnion_id(),userInfo.getCus_name(),
-                    userInfo.getStatus(),userInfo.getProvince(),userInfo.getCity(),userInfo.getOpen_id());
+            jdbc.update(sql,userInfo.getUnion_id(),userInfo.getCus_name(), userInfo.getStatus(),
+                    userInfo.getProvince(),userInfo.getCity(),userInfo.getAvatarUrl(),userInfo.getOpen_id());
             return true;
         }catch (Exception e){
             log.error(e);

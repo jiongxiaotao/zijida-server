@@ -89,6 +89,11 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.nutz</groupId>-->
+            <!--<artifactId>nutz-plugins-spring-boot-starter</artifactId>-->
+            <!--<version>1.r.63</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

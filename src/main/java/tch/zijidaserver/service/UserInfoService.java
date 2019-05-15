@@ -102,6 +102,7 @@ public class UserInfoService {
 					userInfo.setCus_name((String)userInfoData.get("nickName"));
 					userInfo.setProvince((String) userInfoData.get("province"));
 					userInfo.setCity((String) userInfoData.get("city"));
+					userInfo.setAvatarUrl((String) userInfoData.get("avatarUrl"));
 					Boolean res=false;
 					//查询库里有没有，有则更新，没有新增
 					if(userInfoDao.getByUnionId(unionId)!=null){

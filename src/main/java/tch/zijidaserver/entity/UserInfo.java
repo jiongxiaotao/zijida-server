@@ -15,6 +15,7 @@ public class UserInfo{
     private String status;
     private String province;
     private String city;
+    private String avatarUrl;
     private int max_count;
     public UserInfo() {
 
@@ -68,6 +69,14 @@ public class UserInfo{
 		this.city = city;
 	}
 
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
+	}
+
 	public int getMax_count() {
 		return max_count;
 	}
@@ -85,6 +94,7 @@ public class UserInfo{
 				", status='" + status + '\'' +
 				", province='" + province + '\'' +
 				", city='" + city + '\'' +
+				", avatarUrl='" + avatarUrl + '\'' +
 				", max_count=" + max_count +
 				'}';
 	}
