@@ -84,7 +84,6 @@ public class ProjectDao {
             log.info("[SQL]"+sql+"<====>"+id);
             Project project=jdbc.queryForObject(sql, rowMapper,id);
             //查完项目基本信息，要查当前完成打分的个数
-
             return project;
         }catch (Exception e){
             log.error(e);
@@ -107,12 +106,14 @@ public class ProjectDao {
    //新增项目
    public long insert(Project project){
         try{
-            String sql="INSERT INTO t_project (user_id,name,status,invite_code,amount,create_time)" +
-                    " VALUES (:user_id,:name,'0',:invite_code,:amount,SYSDATE())";
-            log.info("[SQL]"+sql+"<====>"+project.getUser_id()+","+project.getName()+","+project.getInvite_code()+","+project.getAmount());
+            String sql="INSERT INTO t_project (user_id,name,type,status,invite_code,amount,create_time)" +
+                    " VALUES (:user_id,:name,:type,'0',:invite_code,:amount,SYSDATE())";
+            log.info("[SQL]"+sql+"<====>"+project.getUser_id()+","+project.getName()+","
+                    +project.getType()+","+project.getInvite_code()+","+project.getAmount());
             MapSqlParameterSource params = new MapSqlParameterSource();
             params.addValue("user_id", project.getUser_id());
             params.addValue("name", project.getName());
+            params.addValue("type", project.getType());
             params.addValue("invite_code", project.getInvite_code());
             params.addValue("amount", project.getAmount());
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -130,11 +131,11 @@ public class ProjectDao {
     //更新项目
     public boolean update(Project project){
         try {
-            String sql="UPDATE t_project SET name=?,status=?,invite_code=?,amount=? WHERE id=?";
-            log.info("[SQL]"+sql+"<====>"+project.getName()+","+project.getStatus()+
+            String sql="UPDATE t_project SET name=?,type=?,status=?,invite_code=?,amount=? WHERE id=?";
+            log.info("[SQL]"+sql+"<====>"+project.getName()+","+project.getType()+","+project.getStatus()+
                     ","+project.getInvite_code()+","+project.getAmount());
 
-            jdbc.update(sql,project.getName(),project.getStatus(),
+            jdbc.update(sql,project.getName(),project.getType(),project.getStatus(),
                     project.getInvite_code(),project.getAmount(),project.getId());
             return true;
         }catch (Exception e){

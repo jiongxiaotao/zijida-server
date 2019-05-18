@@ -86,9 +86,7 @@ public class ScoreService {
 					}
 					else{
 						result = miniService.newSuccessResponseMap();
-						result.put("projectId", projectId);//已收集评分的个数
-						result.put("doneAmount", project.getDone_amount());//已收集评分的个数
-						result.put("amount", project.getAmount());//计划评分个数
+						result.put("project", project);//已收集评分的个数
 						result.put("totalScore", totalScore); //满分分值
 						result.put("voteeCount", voteeOderList.size()); //被评人个数
 						result.put("results", voteeResultList);	//结果列表

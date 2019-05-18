@@ -48,7 +48,9 @@ public class MessageService {
 			String unionId=userInfoDao.getByOpenIdStatus(userSession.getOpenid(), "9").getUnion_id();
 			if(unionId!=null) {
 				//上传文件
-				String uploadPath = messageFilePath+"";
+                Date date = new Date();
+                //按日期建立目录
+				String uploadPath = messageFilePath+(new SimpleDateFormat("yyyyMMdd")).format(date);
 				// 如果目录不存在就创建
 				File uploadDir = new File(uploadPath);
 				if (!uploadDir.exists()) {
@@ -64,8 +66,7 @@ public class MessageService {
 						extensionName = oldName.substring(dot);
 					}
 				}
-				Date date = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 				// 构建文件名称
 				String fileName = "voicemessage_"+sdf.format(date)+(int)(Math.random()*10)+ extensionName;
 				// 获取

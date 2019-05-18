@@ -18,11 +18,12 @@ public class Project {
 
     private long id;
 	private String user_id;
-	private String name;
-    private String status;
-    private String invite_code;
-    private int amount;
-	private int done_amount;
+	private String name;//项目名称
+	private String type;//项目类型：p:评分,t:投票,w:问卷
+    private String status;//项目状态：状态：0-未发布，1-已发布，2-已开放评分，9-已结束
+    private String invite_code;//邀请码，用户进入时的密码
+    private int amount;//预计收集量
+	private int done_amount;//已完成评分个数
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
 	private String create_time;
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
@@ -53,6 +54,14 @@ public class Project {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getStatus() {
@@ -113,6 +122,7 @@ public class Project {
 				"id=" + id +
 				", user_id='" + user_id + '\'' +
 				", name='" + name + '\'' +
+				", type='" + type + '\'' +
 				", status='" + status + '\'' +
 				", invite_code='" + invite_code + '\'' +
 				", amount=" + amount +
@@ -128,6 +138,7 @@ public class Project {
 		project.setId((long) map.get("id"));
 		project.setUser_id((String) map.get("user_id"));
 		project.setName((String) map.get("name"));
+		project.setType((String) map.get("type"));
 		project.setStatus((String) map.get("status"));
 		project.setInvite_code((String)map.get("invite_code"));
 		project.setAmount(((Long)map.get("amount")).intValue());
@@ -149,8 +160,9 @@ public class Project {
 	//用于NamedParameterJdbcTemplate中resultset与当前类转换
 	public Project mapRow(ResultSet rs, int index) throws SQLException {
 		this.setId(rs.getLong("id"));
-		this.setName(rs.getString("name"));
 		this.setUser_id(rs.getString("user_id"));
+		this.setName(rs.getString("name"));
+		this.setType(rs.getString("type"));
 		this.setStatus(rs.getString("status"));
 		this.setInvite_code(rs.getString("invite_code"));
 		this.setAmount(rs.getInt("amount"));

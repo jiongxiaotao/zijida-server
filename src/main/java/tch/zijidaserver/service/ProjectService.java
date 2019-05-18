@@ -99,6 +99,7 @@ public class ProjectService {
 							result = miniService.newSuccessResponseMap();
 							result.put("id", project.getId());
 							result.put("name", project.getName());
+							result.put("type", project.getType());
 							result.put("status", project.getStatus());
 							result.put("done_amount", project.getDone_amount());
 							result.put("amount", project.getAmount());

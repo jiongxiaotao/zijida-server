@@ -133,5 +133,23 @@
                 </resources>
             </build>
         </profile>
+        <profile>
+            <id>prod</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <zijida.version>1.0.0.test-SNAPSHOT</zijida.version>
+                <build.profile.id>prod</build.profile.id>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/env/prod</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
 </project>
