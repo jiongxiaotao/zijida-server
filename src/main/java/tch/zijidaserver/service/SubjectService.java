@@ -32,8 +32,6 @@ public class SubjectService {
 		Map<String, Object> result;
 		List<Subject> subjectList;
 		UserSession userSession=code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 没获取到缓存，说明code失效了，让前段自己从登陆
 		if(userSession != null){
 			// 查询评分项详情
@@ -65,8 +63,6 @@ public class SubjectService {
 		Map<String, Object> result;
 		log.info("addSubject：loginCode=" + loginCode);
 		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
 			long subjectId=subjectDao.insert(subject);
@@ -92,8 +88,6 @@ public class SubjectService {
 		log.info("updateSubject开始：loginCode=" + loginCode + ";subject="
 				+subject );
 		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
 			Boolean ret=subjectDao.update(subject);
@@ -116,8 +110,6 @@ public class SubjectService {
 		log.info("deleteSubject开始：loginCode=" + loginCode + ";subjectId="
 				+subjectId );
 		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
 			Boolean ret=subjectDao.delete(subjectId);

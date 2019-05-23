@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import tch.zijidaserver.entity.Choise;
 import tch.zijidaserver.entity.Question;
 
 import java.util.List;
@@ -47,7 +48,19 @@ public class QuestionDao {
             return null;
         }
    }
-
+    //根据项目id+序号查项目详情
+    public Question queryQuestionByProjectNumber(long projectId,int number) {
+        try{
+            RowMapper<Question> rowMapper=new BeanPropertyRowMapper<Question>(Question.class);
+            String sql="select * from t_question where project_id=? and number=?";
+            log.info("[SQL]"+sql+"<====>"+projectId+","+number);
+            Question question=jdbc.queryForObject(sql, rowMapper,projectId,number);
+            return question;
+        }catch (Exception e){
+            log.error(e);
+            return null;
+        }
+    }
    //新增项目
    public long insert(Question question){
         try{
@@ -81,6 +94,30 @@ public class QuestionDao {
                     question.getNumber()+","+question.getMax_multi_choise()+","+question.getId());
             jdbc.update(sql,question.getName(),question.getType(),question.getNumber(),
                     question.getMax_multi_choise(),question.getId());
+            return true;
+        }catch (Exception e){
+            log.error(e);
+            return false;
+        }
+    }
+    //更新原题目编号为新的
+    public boolean updateNumber(long id,int destNumber){
+        try {
+            String sql="UPDATE t_question SET number=? WHERE id=?";
+            log.info("[SQL]"+sql+"<====>"+destNumber+","+id);
+            jdbc.update(sql,destNumber,id);
+            return true;
+        }catch (Exception e){
+            log.error(e);
+            return false;
+        }
+    }
+    //更新原题目编号为新的,根据projectId+srcNumber定位
+    public boolean updateNumberByProjectNumber(long projectId,int srcNumber, int destNumber){
+        try {
+            String sql="UPDATE t_question SET number=? WHERE project_id=? and number=?";
+            log.info("[SQL]"+sql+"<====>"+destNumber+","+projectId+","+srcNumber);
+            jdbc.update(sql,destNumber,projectId,srcNumber);
             return true;
         }catch (Exception e){
             log.error(e);

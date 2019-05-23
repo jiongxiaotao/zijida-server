@@ -38,3 +38,5 @@ mini.weixinapi:
 #缓存文件
 filePath:
   message: D:/message
+#环境标志
+globalEnv: dev

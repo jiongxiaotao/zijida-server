@@ -32,8 +32,6 @@ public class ProjectManageService {
 		log.info("getProjectManage开始：loginCode=" + loginCode);
 		Map<String, Object> result;
 		UserSession userSession=code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 没获取到缓存，说明code失效了，让前段自己从登陆
 		if(userSession != null){
 			//根据openid在数据库获取union_id,session里一开始并不会保存union_id

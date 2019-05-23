@@ -140,3 +140,60 @@ CREATE TABLE `t_message`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- ----------------------------
+-- Table structure for t_question
+-- ----------------------------
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS `t_question`;
+CREATE TABLE `t_question`  (
+  `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '一道选择题的主键（可以用来投票，或问卷的一道题）',
+  `project_id` bigint(10) NOT NULL COMMENT '所在项目id',
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '选择题的题目',
+  `type` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'text:纯文本,radio:单选,checkbox:多选',
+  `number` int(10) NULL DEFAULT NULL COMMENT '题目在整个问卷中的编号',
+  `max_multi_choise` int(10) NULL DEFAULT 1 COMMENT '多选的最多个数，type=checkbox才有用',
+  `create_time` timestamp(6) NULL DEFAULT NULL COMMENT '生成时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `question_project_id`(`project_id`) USING BTREE,
+  CONSTRAINT `question_project_id` FOREIGN KEY (`project_id`) REFERENCES `t_project` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- ----------------------------
+-- Table structure for t_choise
+-- ----------------------------
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS `t_choise`;
+CREATE TABLE `t_choise`  (
+  `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `question_id` bigint(10) NOT NULL COMMENT '所在题目id',
+  `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '投票选项',
+  `create_time` timestamp(6) NULL DEFAULT NULL COMMENT '生成时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `choise_question_id`(`question_id`) USING BTREE,
+  CONSTRAINT `choise_question_id` FOREIGN KEY (`question_id`) REFERENCES `t_question` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- ----------------------------
+-- Table structure for t_answer
+-- ----------------------------
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS `t_answer`;
+CREATE TABLE `t_answer`  (
+  `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '提交的用户id',
+  `question_id` bigint(10) NOT NULL COMMENT '题目id',
+  `text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文本框输入内容',
+  `choise_id` bigint(10) NULL DEFAULT NULL COMMENT '选择题选项id，（题目是选择题才会有）',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `result_question_id`(`question_id`) USING BTREE,
+  INDEX `result_user_id`(`user_id`) USING BTREE,
+  CONSTRAINT `result_question_id` FOREIGN KEY (`question_id`) REFERENCES `t_question` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `result_user_id` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`union_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;

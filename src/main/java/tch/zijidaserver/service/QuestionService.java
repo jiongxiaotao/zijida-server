@@ -36,9 +36,7 @@ public class QuestionService {
 		log.info("getQuestion开始：loginCode=" + loginCode);
 		Map<String, Object> result;
 		List<Question> questionList;
-		//UserSession userSession=code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
+		UserSession userSession=code2SessionDao.getSessionByLoginCode(loginCode);
 		// 没获取到缓存，说明code失效了，让前段自己从登陆
 		if(userSession != null){
 			// 查询题目详情
@@ -69,42 +67,46 @@ public class QuestionService {
 	public Map<String, Object> insertQuestion(String loginCode,Question question) {
 		Map<String, Object> result;
 		log.info("addQuestion：loginCode=" + loginCode);
-		//UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
+		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
-			long questionId=questionDao.insert(question);
-			if(questionId!=-1) {
-				//选择题要加选项
-				if(question.getType().equals("radio")||question.getType().equals("checkbox")){
-					List<Choise> choiseList=question.getChoiseList();
-					long flag=1;
-					for(Choise item:choiseList){
-						item.setQuestion_id(questionId);
-						flag=choiseDao.insert(item);
-						if(flag==-1)
-							break;
+			//先判断number有没有重复，有则不能新增
+			Question temp=questionDao.queryQuestionByProjectNumber(question.getProject_id(), question.getNumber());
+			if(temp!=null){
+				result = miniService.newErrorResponseMap(3002, "题目序号重复!");
+			}
+			else{
+				long questionId=questionDao.insert(question);
+				if(questionId!=-1) {
+					//选择题要加选项
+					if(question.getType().equals("radio")||question.getType().equals("checkbox")){
+						List<Choise> choiseList=question.getChoiseList();
+						long flag=1;
+						for(Choise item:choiseList){
+							item.setQuestion_id(questionId);
+							flag=choiseDao.insert(item);
+							if(flag==-1)
+								break;
+						}
+						//全部插入成功
+						if(flag!=-1){
+							result = miniService.newSuccessResponseMap();
+							result.put("id", questionId);
+						}
+						else{
+							result = miniService.newErrorResponseMap(3002, "保存题目选项失败!");
+						}
 					}
-					//全部插入成功
-					if(flag!=-1){
+					//非选择题，返回成功
+					else{
 						result = miniService.newSuccessResponseMap();
 						result.put("id", questionId);
 					}
-					else{
-						result = miniService.newErrorResponseMap(3002, "保存题目选项失败!");
-					}
-				}
-				//非选择题，返回成功
-				else{
-					result = miniService.newSuccessResponseMap();
-					result.put("id", questionId);
-				}
 
+				}
+				else
+					result = miniService.newErrorResponseMap(3003, "保存题目失败!");
 			}
-			else
-				result = miniService.newErrorResponseMap(3003, "保存题目失败!");
-
 		}
 		// 没获取到openId，让前段自己从登陆
 		else {
@@ -119,9 +121,7 @@ public class QuestionService {
 		Map<String, Object> result;
 		log.info("updateQuestion开始：loginCode=" + loginCode + ";question="
 				+question );
-		//UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
+		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
 			Boolean ret=questionDao.update(question);
@@ -181,14 +181,68 @@ public class QuestionService {
 		}
 		return result;
 	}
+	/*某题目从m移动到n，m到n之间的题目分别+1或减1 */
+	public Map<String, Object> updateQuestionNumbers(String loginCode,long questionId,int destNumber) {
+		Map<String, Object> result;
+		log.info("updateQuestionNumbers开始：loginCode=" + loginCode + ";questionId="
+				+questionId+";destNumber="+destNumber );
+		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
+		// 主要是判断缓存里还有没有
+		if(userSession != null){
+			Question question=questionDao.queryQuestionById(questionId);
+			if(question!=null) {
+				int projectQuestionCount=(questionDao.queryProjectQuestionList(question.getProject_id())).size();
+				//目标位置调整
+				if(destNumber<1)
+					destNumber=1;
+				if(destNumber>projectQuestionCount)
+					destNumber=projectQuestionCount;
+
+				//对比当前序号与目标序号，是向上还是向下
+				boolean flag=true;
+				if(question.getNumber()>destNumber) {	//向上
+					//目标序号至当前序号-1的所有question序号+1
+					for(int i=question.getNumber()-1;i>=destNumber;i--){
+						flag=questionDao.updateNumberByProjectNumber(question.getProject_id(), i,i+1);
+						if(!flag)
+							break;
+					}
+				}
+				else{ //向下
+					//当前序号+1至目标序号的所有question序号-1
+					for(int i=question.getNumber()+1;i<=destNumber;i++){
+						flag=questionDao.updateNumberByProjectNumber(question.getProject_id(), i,i-1);
+						if(!flag)
+							break;
+					}
+				}
+				//中间的修改没问题则继续，最后修改目标问题的number
+				if(flag)
+					flag=questionDao.updateNumber(questionId,destNumber);
+				//更新都成功
+				if (flag) {
+					result = miniService.newSuccessResponseMap();
+				} else {
+					result = miniService.newErrorResponseMap(3003, "更新题目选项失败!");
+				}
+			}
+			else
+				result = miniService.newErrorResponseMap(3004, "更新题目失败!");
+
+		}
+		// 没获取到openId，让前段自己从登陆
+		else {
+			log.info("获取openId失败：logincode=" + loginCode);
+			result = miniService.newErrorResponseMap(9001, "code已失效!");
+		}
+		return result;
+	}
 	/*删除题目 */
 	public Map<String, Object> deleteQuestion(String loginCode,long questionId) {
 		Map<String, Object> result;
 		log.info("deleteQuestion开始：loginCode=" + loginCode + ";questionId="
 				+questionId );
-		//UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
+		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
 			Boolean ret=questionDao.delete(questionId);
@@ -206,12 +260,4 @@ public class QuestionService {
 		return result;
 	}
 
-	//批量新增选项
-	public Boolean insertChoiseList(List<Choise> choiseList) {
-		Map<String, Object> result;
-		log.info("insertChoiseList");
-
-
-		return true;
-	}
 }

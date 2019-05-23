@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <configuration status="info" name="defaultLogConfig">
     <properties>
-        <property name="LOG_HOME">/root/zijida/log</property>
+        <property name="LOG_HOME">/root/zijida_test/log</property>
         <property name="PATTERN_LAYOUT">[TCH][%d{yyyy-MM-dd HH:mm:ss SSS}][%-5p][%t][%c][message=%m]%n</property>
     </properties>
     <Appenders>

@@ -1,4 +1,4 @@
-server.port: 8888
+server.port: 8899
 
 spring.mvc.view.prefix: /
 spring.mvc.view.suffix: .html
@@ -35,4 +35,6 @@ mini.weixinapi:
   code2session: sns/jscode2session?
 #缓存文件
 filePath:
-  message: /root/zijida/file/message
+  message: /root/zijida_test/file/message
+#环境标志
+globalEnv: text

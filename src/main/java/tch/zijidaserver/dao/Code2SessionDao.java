@@ -22,6 +22,8 @@ public class Code2SessionDao {
     private String weixinhost;
     @Value("${mini.weixinapi.code2session}")
     private String weixinUrl;
+    @Value("${globalEnv}")
+    private String globalEnv;
     private Log log= LogFactory.getLog(Code2SessionDao.class);
     @Autowired
     private JdbcTemplate jdbc;
@@ -57,18 +59,27 @@ public class Code2SessionDao {
     }
     //根据前段送的logincode，获取当前用户的缓存数据
     public UserSession getSessionByLoginCode(String loginCode){
-        try {
-            String redisKey = "zijida_"+loginCode;
-            if (redisUtils.checkKeyExists(redisKey)) {
-                UserSession userSession = redisUtils.get(redisKey,UserSession.class);
-                log.info("从缓存中取出loginCode="+loginCode+"的数据:"+ JSON.toJSONString(userSession));
-                return userSession;
-            }
-            else
+        //本地开发环境，直接返回写死的
+        if(globalEnv.equals("dev")){
+            UserSession userSession=new UserSession();
+            userSession.setOpenid("ozrIJ4zlTDmRgwmEbbXFwiuQvEuU");  //我的openId
+            userSession.setUnionid("olvd61APeNKPDY73LZZBjUqJ5Wgw"); //我的unionId
+            return userSession;
+        }
+        else{
+            try {
+                String redisKey = "zijida_"+loginCode;
+                if (redisUtils.checkKeyExists(redisKey)) {
+                    UserSession userSession = redisUtils.get(redisKey,UserSession.class);
+                    log.info("从缓存中取出loginCode="+loginCode+"的数据:"+ JSON.toJSONString(userSession));
+                    return userSession;
+                }
+                else
+                    return null;
+            }catch (Exception e){
+                log.error(e);
                 return null;
-        }catch (Exception e){
-            log.error(e);
-            return null;
+            }
         }
     }
     //测试使用，返回固定userSesion

@@ -35,6 +35,15 @@ public class QuestionController {
         log.info("[REQUEST]/updateQuestion?loginCode="+loginCode+" body="+question);
         return questionService.updateQuestion(loginCode,question);
     }
+    //将问卷中的一个问题移动到另一个位置
+    @RequestMapping(value="/moveQuestion",method = {RequestMethod.GET})
+    public Map<String, Object> moveQuestion(@RequestParam("loginCode") String loginCode,
+                                            @RequestParam("questionId") long questionId,
+                                            @RequestParam("destNumber") int destNumber)
+    {
+        log.info("[REQUEST]/updateQuestion?loginCode="+loginCode+" questionId="+questionId+" destNumber="+destNumber);
+        return questionService.updateQuestionNumbers(loginCode,questionId,destNumber);
+    }
     @RequestMapping(value="/deleteQuestion",method = RequestMethod.GET)
     public Map<String, Object> deleteQuestion(@RequestParam("loginCode") String loginCode,
                                              @RequestParam("questionId") long questionId)

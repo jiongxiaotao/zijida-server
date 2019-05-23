@@ -40,8 +40,6 @@ public class MessageService {
 		Message message=new Message();
 		log.info("addMessage：loginCode=" + loginCode);
 		UserSession userSession= code2SessionDao.getSessionByLoginCode(loginCode);
-		/****测试查询用户信息时跳过查cache*****/
-		//UserSession userSession=code2SessionDao.getSessionByLoginCodeTest(loginCode);
 		// 主要是判断缓存里还有没有
 		if(userSession != null){
 			//根据openid在数据库获取union_id,session里一开始并不会保存union_id
