@@ -48,7 +48,7 @@ public class Code2SessionDao {
                 //存入redis
                 log.info("新增session信息："+userSession.getLogin_code());
                 String redisKey = "zijida_"+userSession.getLogin_code();
-                redisUtils.set(redisKey, userSession,7200);
+                redisUtils.set(redisKey, userSession,86400);
             }
             return userSession;
         }catch (Exception e){

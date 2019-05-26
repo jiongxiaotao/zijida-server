@@ -48,7 +48,7 @@ public class MessageService {
 				//上传文件
                 Date date = new Date();
                 //按日期建立目录
-				String uploadPath = messageFilePath+(new SimpleDateFormat("yyyyMMdd")).format(date);
+				String uploadPath = messageFilePath+File.separator+(new SimpleDateFormat("yyyyMMdd")).format(date);
 				// 如果目录不存在就创建
 				File uploadDir = new File(uploadPath);
 				if (!uploadDir.exists()) {
