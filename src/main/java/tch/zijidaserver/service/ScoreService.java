@@ -68,7 +68,7 @@ public class ScoreService {
 							for(Map<String,Object> scoreItem:subjectResultList){
 								voteeScore+=((BigDecimal)scoreItem.get("score")).doubleValue();
 							}
-							voteeResult.put("score", voteeScore);	//被评人总分
+							voteeResult.put("score",(float)(Math.round(voteeScore*100)/100));	//被评人总分,保留两位小数
 							voteeResult.put("subjects", subjectResultList);
 
 							//加入被评人结果列表

@@ -22,7 +22,7 @@ public class ScoreDao {
     public List<Map<String,Object>> querySubjectScoreListByVoteeId(long voteeId) {
         try{
             RowMapper<Score> rowMapper=new BeanPropertyRowMapper<Score>(Score.class);
-            String sql="select AVG(score) as score, b.name,b.max_score" +
+            String sql="select CAST(AVG(score) as DECIMAL(15,2)) as score, b.name,b.max_score" +
                     " from t_score a inner join t_subject b on a.subject_id=b.id " +
                     "where a.votee_id=? GROUP BY a.subject_id";
 

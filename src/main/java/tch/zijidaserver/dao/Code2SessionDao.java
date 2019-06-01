@@ -60,13 +60,13 @@ public class Code2SessionDao {
     //根据前段送的logincode，获取当前用户的缓存数据
     public UserSession getSessionByLoginCode(String loginCode){
         //本地开发环境，直接返回写死的
-        if(globalEnv.equals("dev")){
-            UserSession userSession=new UserSession();
-            userSession.setOpenid("ozrIJ4zlTDmRgwmEbbXFwiuQvEuU");  //我的openId
-            userSession.setUnionid("olvd61APeNKPDY73LZZBjUqJ5Wgw"); //我的unionId
-            return userSession;
-        }
-        else{
+//        if(globalEnv.equals("dev")){
+//            UserSession userSession=new UserSession();
+//            userSession.setOpenid("ozrIJ4zlTDmRgwmEbbXFwiuQvEuU");  //我的openId
+//            userSession.setUnionid("olvd61APeNKPDY73LZZBjUqJ5Wgw"); //我的unionId
+//            return userSession;
+//        }
+//        else{
             try {
                 String redisKey = "zijida_"+loginCode;
                 if (redisUtils.checkKeyExists(redisKey)) {
@@ -80,7 +80,7 @@ public class Code2SessionDao {
                 log.error(e);
                 return null;
             }
-        }
+//        }
     }
     //测试使用，返回固定userSesion
     public UserSession getSessionByLoginCodeTest(String loginCode){

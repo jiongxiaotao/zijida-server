@@ -38,23 +38,15 @@ public class UserInfoService {
 				log.info("小程序用户，使用openId查询");
 				// 小程序暂时status全是9
 				UserInfo userInfo = userInfoDao.getByOpenIdStatus(openId, "9");
-				if (userInfo != null) {
-					result = miniService.newSuccessResponseMap();
-					result.put("userInfo", userInfo);
-				}
-				else
-					result = miniService.newErrorResponseMap(9003,"根据openId获取用户信息失败!");
+				result = miniService.newSuccessResponseMap();
+				result.put("userInfo", userInfo);
 			}
 			// 用户之前关注过公众号，直接查
 			else {
 				log.info("使用unionId查询：unionId=" + unionId);
 				UserInfo userInfo = userInfoDao.getByUnionId(unionId);
-				if (userInfo != null) {
-					result = miniService.newSuccessResponseMap();
-					result.put("userInfo", userInfo);
-				}
-				else
-					result = miniService.newErrorResponseMap(9002,"根据unionId获取用户信息失败!");
+				result = miniService.newSuccessResponseMap();
+				result.put("userInfo", userInfo);
 			}
 		}
 		else {
